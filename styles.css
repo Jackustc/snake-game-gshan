@@ -1,0 +1,81 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #f5f5f5;
+  color: #1a1a1a;
+}
+
+.app {
+  max-width: 480px;
+  margin: 24px auto;
+  padding: 16px;
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: 1.5rem;
+}
+
+.hud {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: repeat(20, 1fr);
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1 / 1;
+  border: 1px solid #bbb;
+  background: #fff;
+}
+
+.cell {
+  border: 1px solid #efefef;
+}
+
+.cell.snake {
+  background: #2c7a3f;
+}
+
+.cell.food {
+  background: #c23f3f;
+}
+
+.actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  border: 1px solid #999;
+  background: #fff;
+  color: #1a1a1a;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.controls {
+  margin-top: 12px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-row {
+  display: flex;
+  gap: 6px;
+}
+
+.help {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
