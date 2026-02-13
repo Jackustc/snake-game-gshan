@@ -26,6 +26,36 @@ h1 {
   margin-bottom: 12px;
 }
 
+.speed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.speed input {
+  flex: 1;
+}
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.player input {
+  flex: 1;
+  border: 1px solid #999;
+  padding: 8px 10px;
+  background: #fff;
+}
+
+.current-player {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(20, 1fr);
@@ -75,7 +105,69 @@ button {
   gap: 6px;
 }
 
+.controls button {
+  min-width: 64px;
+  min-height: 48px;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 10px 12px;
+  touch-action: manipulation;
+}
+
+@media (max-width: 640px) {
+  .controls {
+    width: 100%;
+    max-width: 360px;
+    gap: 10px;
+  }
+
+  .controls button {
+    min-width: 90px;
+    min-height: 72px;
+    font-size: 2rem;
+    font-weight: 700;
+    border-width: 2px;
+  }
+
+  .control-row {
+    justify-content: space-between;
+    gap: 10px;
+  }
+}
+
 .help {
   margin-top: 8px;
   font-size: 0.9rem;
+}
+
+.leaderboard {
+  margin-top: 18px;
+  border-top: 1px solid #d6d6d6;
+  padding-top: 12px;
+}
+
+.leaderboard-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.leaderboard h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+#ranking-list {
+  margin: 8px 0 0;
+  padding-left: 22px;
+}
+
+#ranking-list li {
+  margin: 4px 0;
+}
+
+.empty-rank {
+  list-style: none;
+  margin-left: -22px;
+  color: #666;
 }

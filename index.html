@@ -13,6 +13,17 @@
         <span>Score: <strong id="score">0</strong></span>
         <span id="status">Running</span>
       </div>
+      <div class="player">
+        <label for="player-name">Player</label>
+        <input id="player-name" type="text" maxlength="20" placeholder="Enter name" />
+        <button id="save-player-btn" type="button">Set</button>
+      </div>
+      <p class="current-player">Current: <strong id="current-player">Player</strong></p>
+      <div class="speed">
+        <label for="speed-range">Speed</label>
+        <input id="speed-range" type="range" min="60" max="300" step="10" value="300" />
+        <span><strong id="speed-value">300</strong> ms</span>
+      </div>
       <div id="board" class="board" aria-label="Snake game board"></div>
       <div class="actions">
         <button id="restart-btn" type="button">Restart</button>
@@ -27,7 +38,14 @@
         </div>
       </div>
       <p class="help">Use arrow keys or WASD. Press space to pause/resume.</p>
+      <section class="leaderboard" aria-label="Player ranking board">
+        <div class="leaderboard-head">
+          <h2>Ranking</h2>
+          <button id="clear-ranking-btn" type="button">Clear</button>
+        </div>
+        <ol id="ranking-list"></ol>
+      </section>
     </main>
-    <script type="module" src="./snake.js"></script>
+    <script src="./snake.js"></script>
   </body>
 </html>
