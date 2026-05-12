@@ -3,49 +3,287 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Snake</title>
+    <title>ExperimentOS</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app">
-      <h1>Snake</h1>
-      <div class="hud">
-        <span>Score: <strong id="score">0</strong></span>
-        <span id="status">Running</span>
-      </div>
-      <div class="player">
-        <label for="player-name">Player</label>
-        <input id="player-name" type="text" maxlength="20" placeholder="Enter name" />
-        <button id="save-player-btn" type="button">Set</button>
-      </div>
-      <p class="current-player">Current: <strong id="current-player">Player</strong></p>
-      <div class="speed">
-        <label for="speed-range">Speed</label>
-        <input id="speed-range" type="range" min="60" max="300" step="10" value="300" />
-        <span><strong id="speed-value">300</strong> ms</span>
-      </div>
-      <div id="board" class="board" aria-label="Snake game board"></div>
-      <div class="actions">
-        <button id="restart-btn" type="button">Restart</button>
-        <button id="pause-btn" type="button">Pause</button>
-      </div>
-      <div class="controls" aria-label="On-screen controls">
-        <button data-dir="up" type="button">↑</button>
-        <div class="control-row">
-          <button data-dir="left" type="button">←</button>
-          <button data-dir="down" type="button">↓</button>
-          <button data-dir="right" type="button">→</button>
+    <main class="app-shell">
+      <aside class="workflow-rail" aria-label="Agentic workflow">
+        <div class="brand-block">
+          <span class="brand-mark" aria-hidden="true">EO</span>
+          <div>
+            <h1>ExperimentOS</h1>
+            <p>Agentic online experiments</p>
+          </div>
         </div>
-      </div>
-      <p class="help">Use arrow keys or WASD. Press space to pause/resume.</p>
-      <section class="leaderboard" aria-label="Player ranking board">
-        <div class="leaderboard-head">
-          <h2>Ranking</h2>
-          <button id="clear-ranking-btn" type="button">Clear</button>
-        </div>
-        <ol id="ranking-list"></ol>
+
+        <nav class="workflow-list" aria-label="Research workflow stages">
+          <button class="workflow-step is-active" type="button" data-page="setup"><span>01</span> Study setup</button>
+          <button class="workflow-step" type="button" data-page="scale"><span>02</span> Scale development</button>
+          <button class="workflow-step" type="button" data-page="assignment"><span>03</span> Treatment assignment</button>
+          <button class="workflow-step" type="button" data-page="sample"><span>04</span> Sample collection</button>
+          <button class="workflow-step" type="button" data-page="measurement"><span>05</span> Measurement model</button>
+          <button class="workflow-step" type="button" data-page="analysis"><span>06</span> Analysis reporting</button>
+          <button class="workflow-step" type="button" data-page="bias"><span>07</span> Method bias</button>
+        </nav>
+      </aside>
+
+      <section class="main-stage">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Live study builder</p>
+            <h2 id="page-title">Study setup</h2>
+          </div>
+          <div class="top-actions">
+            <button id="export-report-btn" class="icon-button" type="button" title="Export report" aria-label="Export report">DL</button>
+            <button id="run-study-btn" class="primary-button" type="button">Run current page</button>
+          </div>
+        </header>
+
+        <section id="page-setup" class="page-view is-active">
+          <div class="hero-panel setup-hero">
+            <div class="study-copy">
+              <label for="study-name">Study name</label>
+              <input id="study-name" type="text" value="Trust signals in AI-assisted purchase decisions" />
+              <label for="study-description">Study description</label>
+              <textarea id="study-description" rows="5">This online experiment examines whether transparent AI recommendation explanations increase perceived trust and purchase intention. Participants are assigned to alternative treatment conditions, complete construct measures, and provide demographics for validity checks.</textarea>
+              <div class="study-fields">
+                <label>Independent variable<input id="iv-name" type="text" value="AI transparency treatment" /></label>
+                <label>Outcome constructs<textarea id="outcome-names" rows="3">Purchase intention, Adoption intention</textarea></label>
+                <label>Mediator constructs<textarea id="mediator-names" rows="3">Perceived trust, Perceived information quality</textarea></label>
+                <label>Moderator constructs<textarea id="moderator-names" rows="3">AI literacy, Privacy concern</textarea></label>
+              </div>
+              <div class="inline-actions">
+                <button id="sync-setup-btn" class="text-button" type="button">Sync constructs and treatments</button>
+              </div>
+            </div>
+            <canvas id="workflow-canvas" width="760" height="330" aria-label="Experiment workflow visualization"></canvas>
+          </div>
+
+          <section class="metrics-strip" aria-label="Study readiness metrics">
+            <article><span>Constructs</span><strong id="construct-count">6</strong></article>
+            <article><span>Treatments</span><strong id="treatment-count">2</strong></article>
+            <article><span>Sample size</span><strong id="sample-size-metric">240</strong></article>
+            <article><span>CMB risk</span><strong id="cmb-metric">Low</strong></article>
+          </section>
+        </section>
+
+        <section id="page-scale" class="page-view">
+          <div class="two-column">
+            <section class="tool-panel">
+              <div class="panel-heading">
+                <h3>Constructs and Measurement Items</h3>
+                <span id="validity-label">Editable</span>
+              </div>
+              <div id="construct-editor" class="stack-list"></div>
+              <div class="inline-form">
+                <input id="construct-name" type="text" placeholder="Construct name" aria-label="Construct name" />
+                <input id="construct-items" type="text" placeholder="Optional items; generated if blank" aria-label="Construct items" />
+                <button id="add-construct-btn" type="button">Add</button>
+              </div>
+            </section>
+
+            <aside class="agent-panel">
+              <div class="panel-heading">
+                <h3>Search Agent</h3>
+                <span>Scale literature assistant</span>
+              </div>
+              <div id="scale-chat" class="chat-log" aria-live="polite"></div>
+              <div class="chat-input">
+                <input id="scale-agent-input" type="text" placeholder="Ask for construct measures or item references" />
+                <button id="scale-agent-btn" type="button">Send</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="page-assignment" class="page-view">
+          <div class="two-column">
+            <section class="tool-panel">
+              <div class="panel-heading">
+                <h3>Treatment Conditions</h3>
+                <span id="assignment-label">Balanced</span>
+              </div>
+              <div id="treatment-list" class="stack-list"></div>
+              <div class="inline-form">
+                <input id="treatment-name" type="text" placeholder="Condition name" aria-label="Condition name" />
+                <input id="treatment-description" type="text" placeholder="Treatment description" aria-label="Treatment description" />
+                <button id="add-treatment-btn" type="button">Add</button>
+              </div>
+              <div class="segmented" aria-label="Treatment assignment mode">
+                <button class="is-selected" type="button" data-assignment="balanced">Balanced</button>
+                <button type="button" data-assignment="random">Random</button>
+                <button type="button" data-assignment="blocked">Blocked</button>
+              </div>
+            </section>
+
+            <aside class="agent-panel">
+              <div class="panel-heading">
+                <h3>Treatment Agent</h3>
+                <span>Stimulus generator</span>
+              </div>
+              <div id="treatment-chat" class="chat-log" aria-live="polite"></div>
+              <div class="chat-input">
+                <input id="treatment-agent-input" type="text" placeholder="Ask for new conditions or manipulation ideas" />
+                <button id="treatment-agent-btn" type="button">Send</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="page-sample" class="page-view">
+          <div class="power-layout">
+            <section class="tool-panel">
+              <div class="panel-heading">
+                <h3>Sample Design</h3>
+                <span id="power-label">Power .95</span>
+              </div>
+              <label class="slider-row">Target sample size<input id="sample-size" type="range" min="1" max="1200" step="1" value="240" /><strong id="sample-size-value">240</strong></label>
+              <label class="slider-row">Expected effect size<input id="effect-size" type="range" min="5" max="100" step="5" value="35" /><strong id="effect-size-value">0.35</strong></label>
+              <label class="slider-row">Target power<input id="sample-power" type="range" min="50" max="99" step="1" value="80" /><strong id="sample-power-value">0.80</strong></label>
+              <button id="generate-personas-btn" class="primary-button stretch" type="button">Generate personas</button>
+            </section>
+
+            <section class="tool-panel gpower-panel">
+              <div class="panel-heading">
+                <h3>G*Power-style Calculator</h3>
+                <span>t, F, chi-square, z, exact</span>
+              </div>
+              <div class="gpower-grid">
+                <label>Test family<select id="gp-test-family"><option>F tests</option><option>t tests</option><option>χ² tests</option><option>z tests</option><option>Exact tests</option></select></label>
+                <label>Statistical test<select id="gp-stat-test"><option>ANOVA: fixed effects, omnibus</option><option>Linear multiple regression</option><option>Means: difference between two groups</option><option>Goodness-of-fit test</option><option>Correlation: point biserial model</option></select></label>
+                <label>Type of power analysis<select id="gp-analysis-type"><option>A priori</option><option>Post hoc</option><option>Sensitivity</option><option>Criterion</option></select></label>
+                <label>Tail(s)<select id="gp-tails"><option>Two</option><option>One</option></select></label>
+                <label>Effect size<input id="gp-effect" type="number" min="0.01" step="0.01" value="0.35" /></label>
+                <label>α err prob<input id="gp-alpha" type="number" min="0.001" max="0.2" step="0.001" value="0.05" /></label>
+                <label>Power (1-β err prob)<input id="gp-power" type="number" min="0.1" max="0.999" step="0.01" value="0.80" /></label>
+                <label>Total sample size<input id="gp-total-n" type="number" min="2" step="1" value="240" /></label>
+                <label>Number of groups<input id="gp-groups" type="number" min="1" step="1" value="2" /></label>
+                <label>Number of predictors<input id="gp-predictors" type="number" min="1" step="1" value="3" /></label>
+              </div>
+              <div class="inline-actions">
+                <button id="gpower-calc-btn" class="primary-button" type="button">Calculate power instantly</button>
+                <button id="gpower-apply-btn" class="text-button" type="button">Apply N to sample</button>
+              </div>
+              <div id="gpower-output" class="result-grid"></div>
+              <canvas id="power-curve-canvas" width="760" height="260" aria-label="Power curve"></canvas>
+              <div id="effect-size-guide" class="effect-guide"></div>
+              <p id="effect-reference" class="reference-note"></p>
+            </section>
+
+            <section class="agent-panel">
+              <div class="panel-heading">
+                <h3>AI G*Power Agent</h3>
+                <span>Ask about the calculator</span>
+              </div>
+              <div id="power-chat" class="chat-log compact" aria-live="polite"></div>
+              <div class="chat-input">
+                <input id="power-agent-input" type="text" placeholder="Ask about G*Power, effect size, alpha, power, N, or tests" />
+                <button id="power-agent-btn" type="button">Send</button>
+              </div>
+            </section>
+          </div>
+
+          <section class="results-panel">
+            <div class="panel-heading">
+              <h3>Generated Personas</h3>
+              <span id="persona-count">0 participants</span>
+            </div>
+            <div class="persona-selector">
+              <label>Select participant by ID<select id="persona-select" aria-label="Select participant by ID"></select></label>
+              <div id="persona-editor" class="persona-edit-box"></div>
+            </div>
+            <div class="inline-actions">
+              <button id="generate-data-btn" class="primary-button" type="button">Start synthetic data generation</button>
+              <button id="download-data-btn" class="text-button" type="button">Download CSV</button>
+            </div>
+            <div id="variable-stats" class="variable-stats empty-state">Click a variable name in the CSV view to inspect simple statistics.</div>
+            <div class="table-wrap">
+              <table>
+                <thead id="data-table-head"></thead>
+                <tbody id="data-table"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section id="page-measurement" class="page-view">
+          <div class="two-column">
+            <section class="graph-panel">
+              <div class="panel-heading">
+                <h3>Conceptual Model Drawing Tool</h3>
+                <span id="diagram-status">Move mode</span>
+              </div>
+              <div class="diagram-toolbar" aria-label="Diagram drawing tools">
+                <button id="diagram-move-btn" class="text-button is-selected" type="button">Move</button>
+                <button id="diagram-link-btn" class="text-button" type="button">Draw arrow</button>
+                <button id="diagram-remove-btn" class="text-button" type="button">Remove selected arrow</button>
+                <button id="diagram-clear-btn" class="text-button" type="button">Clear arrows</button>
+                <button id="diagram-finalize-btn" class="text-button" type="button">Finalize model</button>
+              </div>
+              <canvas id="model-canvas" width="860" height="460" aria-label="Conceptual model and measurement model"></canvas>
+            </section>
+            <section class="tool-panel">
+              <div class="panel-heading">
+                <h3>Confirmatory Factor Analysis</h3>
+                <span id="cfa-status">Fit accepted</span>
+              </div>
+              <div id="cfa-results" class="result-grid"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="page-analysis" class="page-view">
+          <div class="two-column">
+            <section class="graph-panel">
+              <div class="panel-heading">
+                <h3>Structural Model Results</h3>
+                <span>Hayes-style moderated mediation</span>
+              </div>
+              <canvas id="analysis-canvas" width="860" height="460" aria-label="Analysis results graph"></canvas>
+            </section>
+            <aside class="report-panel">
+              <div class="panel-heading">
+                <h3>Model Output</h3>
+                <span id="run-time">Not run</span>
+              </div>
+              <div id="report-output" class="report-output"></div>
+              <div class="table-wrap compact-table">
+                <table>
+                  <thead><tr><th>Outcome</th><th>Predictor</th><th>β</th><th>SE</th><th>t</th><th>p</th></tr></thead>
+                  <tbody id="regression-table"></tbody>
+                </table>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="page-bias" class="page-view">
+          <div class="two-column">
+            <section class="tool-panel">
+              <div class="panel-heading">
+                <h3>Common Method Bias</h3>
+                <span id="cmb-status">Low risk</span>
+              </div>
+              <div id="bias-results" class="report-output"></div>
+            </section>
+            <section class="tool-panel">
+              <div class="panel-heading">
+                <h3>Potential Solutions</h3>
+                <span>Procedural and statistical</span>
+              </div>
+              <div class="solution-list">
+                <article><strong>Temporal separation</strong><p>Collect predictors, mediators, moderators, and outcomes in separate blocks or waves.</p></article>
+                <article><strong>Source separation</strong><p>Use different sources for treatment exposure, mediators, and outcomes when feasible.</p></article>
+                <article><strong>Marker variable</strong><p>Add a theoretically unrelated marker construct to estimate shared method variance.</p></article>
+                <article><strong>Latent method factor</strong><p>Compare CFA fit with and without a common latent factor across all indicators.</p></article>
+              </div>
+            </section>
+          </div>
+        </section>
       </section>
     </main>
-    <script src="./snake.js"></script>
+
+    <script src="./experiment.js"></script>
   </body>
 </html>
