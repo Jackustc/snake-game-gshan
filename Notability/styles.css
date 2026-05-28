@@ -379,6 +379,7 @@ details p {
 }
 
 .visitor-chart {
+  position: relative;
   margin: 0;
   padding: 14px 14px 12px;
   background: rgba(255, 255, 255, 0.07);
@@ -396,6 +397,13 @@ details p {
   stroke-width: 1;
 }
 
+.chart-y-labels text,
+.chart-labels text {
+  fill: rgba(255, 255, 255, 0.68);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
 .chart-fill {
   fill: rgba(22, 127, 122, 0.25);
 }
@@ -407,14 +415,67 @@ details p {
   stroke-width: 4;
 }
 
-.chart-points circle {
+.chart-point {
+  cursor: pointer;
+  outline: none;
+}
+
+.point-hit-area {
+  fill: transparent;
+}
+
+.point-dot {
   fill: var(--coral);
   stroke: #ffffff;
   stroke-width: 2;
+  transition: r 160ms ease, fill 160ms ease;
 }
 
-.chart-labels text {
-  fill: rgba(255, 255, 255, 0.68);
+.chart-point:hover .point-dot,
+.chart-point:focus .point-dot {
+  fill: var(--gold);
+  r: 7;
+}
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: 2px;
+  min-width: 104px;
+  padding: 9px 10px;
+  color: var(--ink);
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 12px));
+  transition: opacity 140ms ease;
+}
+
+.chart-tooltip::after {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  content: "";
+  background: var(--white);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.chart-tooltip.is-visible {
+  opacity: 1;
+}
+
+.chart-tooltip strong {
+  color: var(--teal-dark);
+  font-size: 1.1rem;
+}
+
+.chart-tooltip span {
+  color: var(--muted);
   font-size: 0.78rem;
   font-weight: 800;
 }

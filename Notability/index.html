@@ -245,11 +245,13 @@
             <title id="chart-title">Daily visitors over the last seven days</title>
             <desc id="chart-desc">A line chart showing local visit counts grouped by day.</desc>
             <g class="chart-grid" aria-hidden="true"></g>
+            <g class="chart-y-labels" aria-hidden="true"></g>
             <path class="chart-fill" aria-hidden="true"></path>
             <path class="chart-line" aria-hidden="true"></path>
-            <g class="chart-points" aria-hidden="true"></g>
+            <g class="chart-points"></g>
             <g class="chart-labels" aria-hidden="true"></g>
           </svg>
+          <div class="chart-tooltip" id="chart-tooltip" role="status"></div>
           <figcaption id="chart-summary">Tracking daily visitors...</figcaption>
         </figure>
         <div class="source-list" id="source-list" aria-label="Visitor sources by count"></div>

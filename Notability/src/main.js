@@ -88,19 +88,49 @@ const pointPath = (points) => {
     .join(" ");
 };
 
+const formatDateLabel = (dateKey) => {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+};
+
+const positionTooltip = (point, content) => {
+  const tooltip = document.querySelector("#chart-tooltip");
+  const chart = document.querySelector(".visitor-chart");
+  const svg = document.querySelector("#daily-visitor-chart");
+  const chartRect = chart.getBoundingClientRect();
+  const svgRect = svg.getBoundingClientRect();
+  const scaleX = svgRect.width / 520;
+  const scaleY = svgRect.height / 220;
+  const left = svgRect.left - chartRect.left + point.x * scaleX;
+  const top = svgRect.top - chartRect.top + point.y * scaleY;
+
+  tooltip.innerHTML = content;
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${top}px`;
+  tooltip.classList.add("is-visible");
+};
+
+const hideTooltip = () => {
+  document.querySelector("#chart-tooltip").classList.remove("is-visible");
+};
+
 const renderVisitorChart = (dailyData) => {
   const svg = document.querySelector("#daily-visitor-chart");
   const grid = svg.querySelector(".chart-grid");
+  const yLabels = svg.querySelector(".chart-y-labels");
   const line = svg.querySelector(".chart-line");
   const fill = svg.querySelector(".chart-fill");
   const pointsGroup = svg.querySelector(".chart-points");
   const labelsGroup = svg.querySelector(".chart-labels");
   const width = 520;
   const height = 220;
-  const padding = { top: 24, right: 20, bottom: 42, left: 44 };
+  const padding = { top: 24, right: 20, bottom: 42, left: 54 };
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
   const maxVisitors = Math.max(1, ...dailyData.map((day) => day.count));
+  const tickValues = [maxVisitors, Math.round(maxVisitors / 2), 0];
 
   const points = dailyData.map((day, index) => {
     const x = padding.left + (chartWidth / (dailyData.length - 1 || 1)) * index;
@@ -108,10 +138,19 @@ const renderVisitorChart = (dailyData) => {
     return { ...day, x, y };
   });
 
-  grid.innerHTML = [0, 0.5, 1]
-    .map((ratio) => {
+  grid.innerHTML = tickValues
+    .map((value) => {
+      const ratio = 1 - value / maxVisitors;
       const y = padding.top + chartHeight * ratio;
       return `<line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}"></line>`;
+    })
+    .join("");
+
+  yLabels.innerHTML = tickValues
+    .map((value) => {
+      const ratio = 1 - value / maxVisitors;
+      const y = padding.top + chartHeight * ratio + 4;
+      return `<text x="${padding.left - 12}" y="${y}" text-anchor="end">${value}</text>`;
     })
     .join("");
 
@@ -124,7 +163,10 @@ const renderVisitorChart = (dailyData) => {
   pointsGroup.innerHTML = points
     .map(
       (point) =>
-        `<circle cx="${point.x}" cy="${point.y}" r="5"><title>${point.key}: ${point.count} visits</title></circle>`
+        `<g class="chart-point" tabindex="0" role="button" aria-label="${formatDateLabel(point.key)}: ${point.count} visits" data-x="${point.x}" data-y="${point.y}" data-date="${formatDateLabel(point.key)}" data-count="${point.count}">
+          <circle class="point-hit-area" cx="${point.x}" cy="${point.y}" r="15"></circle>
+          <circle class="point-dot" cx="${point.x}" cy="${point.y}" r="5"></circle>
+        </g>`
     )
     .join("");
 
@@ -134,6 +176,19 @@ const renderVisitorChart = (dailyData) => {
         `<text x="${point.x}" y="${height - 15}" text-anchor="middle">${point.label}</text>`
     )
     .join("");
+
+  pointsGroup.querySelectorAll(".chart-point").forEach((pointElement) => {
+    const point = {
+      x: Number(pointElement.dataset.x),
+      y: Number(pointElement.dataset.y)
+    };
+    const content = `<strong>${pointElement.dataset.count}</strong><span>${pointElement.dataset.date} visitors</span>`;
+
+    pointElement.addEventListener("mouseenter", () => positionTooltip(point, content));
+    pointElement.addEventListener("mouseleave", hideTooltip);
+    pointElement.addEventListener("focus", () => positionTooltip(point, content));
+    pointElement.addEventListener("blur", hideTooltip);
+  });
 };
 
 const renderSourceList = (sources) => {
