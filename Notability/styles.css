@@ -338,19 +338,27 @@ details p {
 
 .analytics-panel {
   display: grid;
-  gap: 12px;
-  padding: 18px;
+  gap: 18px;
+  padding: 20px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 8px;
   box-shadow: var(--shadow);
 }
 
-.analytics-panel div {
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.metric-grid div {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-height: 102px;
   padding: 16px;
   background: rgba(255, 255, 255, 0.07);
   border-radius: 8px;
@@ -358,15 +366,87 @@ details p {
 
 .metric-label {
   color: rgba(255, 255, 255, 0.68);
-  font-size: 0.86rem;
+  font-size: 0.76rem;
   font-weight: 800;
   text-transform: uppercase;
 }
 
 .analytics-panel strong {
-  max-width: 58%;
+  max-width: 100%;
   overflow-wrap: anywhere;
-  text-align: right;
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+.visitor-chart {
+  margin: 0;
+  padding: 14px 14px 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+}
+
+.visitor-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.chart-grid line {
+  stroke: rgba(255, 255, 255, 0.13);
+  stroke-width: 1;
+}
+
+.chart-fill {
+  fill: rgba(22, 127, 122, 0.25);
+}
+
+.chart-line {
+  fill: none;
+  stroke: #6ee1d5;
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+.chart-points circle {
+  fill: var(--coral);
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.chart-labels text {
+  fill: rgba(255, 255, 255, 0.68);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.visitor-chart figcaption {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.source-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.source-list span {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 9px 11px;
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.source-list strong {
+  color: var(--white);
+  font-size: 1rem;
 }
 
 @media (max-width: 900px) {
@@ -428,13 +508,11 @@ details p {
     min-height: auto;
   }
 
-  .analytics-panel div {
-    align-items: flex-start;
-    flex-direction: column;
+  .metric-grid {
+    grid-template-columns: 1fr;
   }
 
-  .analytics-panel strong {
-    max-width: 100%;
-    text-align: left;
+  .metric-grid div {
+    min-height: auto;
   }
 }

@@ -217,26 +217,42 @@
     <footer id="visitor-insights" class="site-footer">
       <div>
         <p class="section-kicker">Visitor insights</p>
-        <h2>Live source tracking</h2>
+        <h2>Daily visitor curve</h2>
         <p>
           This page includes Vercel Web Analytics for deployed visitor counts,
-          referrers, and sources. The local widget below records this browser's
-          visit count and detected source for transparent on-page feedback.
+          referrers, and sources. The local widget below groups this browser's
+          visits by day and draws the daily change as a curve for transparent
+          on-page feedback.
         </p>
       </div>
       <div class="analytics-panel" aria-live="polite">
-        <div>
-          <span class="metric-label">This browser visits</span>
-          <strong id="visit-count">1</strong>
+        <div class="metric-grid">
+          <div>
+            <span class="metric-label">Today</span>
+            <strong id="today-count">1</strong>
+          </div>
+          <div>
+            <span class="metric-label">Last 7 days</span>
+            <strong id="week-count">1</strong>
+          </div>
+          <div>
+            <span class="metric-label">Detected source</span>
+            <strong id="visit-source">Direct</strong>
+          </div>
         </div>
-        <div>
-          <span class="metric-label">Detected source</span>
-          <strong id="visit-source">Direct</strong>
-        </div>
-        <div>
-          <span class="metric-label">Landing page</span>
-          <strong id="landing-page">/</strong>
-        </div>
+        <figure class="visitor-chart">
+          <svg id="daily-visitor-chart" viewBox="0 0 520 220" role="img" aria-labelledby="chart-title chart-desc">
+            <title id="chart-title">Daily visitors over the last seven days</title>
+            <desc id="chart-desc">A line chart showing local visit counts grouped by day.</desc>
+            <g class="chart-grid" aria-hidden="true"></g>
+            <path class="chart-fill" aria-hidden="true"></path>
+            <path class="chart-line" aria-hidden="true"></path>
+            <g class="chart-points" aria-hidden="true"></g>
+            <g class="chart-labels" aria-hidden="true"></g>
+          </svg>
+          <figcaption id="chart-summary">Tracking daily visitors...</figcaption>
+        </figure>
+        <div class="source-list" id="source-list" aria-label="Visitor sources by count"></div>
       </div>
     </footer>
 
