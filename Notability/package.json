@@ -1,0 +1,19 @@
+{
+  "name": "notability-student-guide",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A promotional student guide website for Notability with visitor source tracking.",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "start": "vite --host 127.0.0.1",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.5.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.19"
+  }
+}
