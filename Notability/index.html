@@ -232,18 +232,29 @@
             <strong id="today-count">1</strong>
           </div>
           <div>
-            <span class="metric-label">Last 7 days</span>
-            <strong id="week-count">1</strong>
+            <span class="metric-label">Selected range</span>
+            <strong id="range-count">1</strong>
           </div>
           <div>
             <span class="metric-label">Detected source</span>
             <strong id="visit-source">Direct</strong>
           </div>
         </div>
+        <div class="range-controls">
+          <label>
+            <span>Start date</span>
+            <input id="range-start" type="date" />
+          </label>
+          <label>
+            <span>End date</span>
+            <input id="range-end" type="date" />
+          </label>
+          <button id="download-csv" type="button">Download CSV</button>
+        </div>
         <figure class="visitor-chart">
           <svg id="daily-visitor-chart" viewBox="0 0 520 220" role="img" aria-labelledby="chart-title chart-desc">
-            <title id="chart-title">Daily visitors over the last seven days</title>
-            <desc id="chart-desc">A line chart showing local visit counts grouped by day.</desc>
+            <title id="chart-title">Daily visitors by selected date range</title>
+            <desc id="chart-desc">A line chart showing local visit counts grouped by day for the selected date range.</desc>
             <g class="chart-grid" aria-hidden="true"></g>
             <g class="chart-y-labels" aria-hidden="true"></g>
             <path class="chart-fill" aria-hidden="true"></path>

@@ -3,7 +3,7 @@ import { inject } from "@vercel/analytics";
 inject();
 
 const storageKey = "notabilityStudentGuideAnalytics";
-const chartDays = 7;
+const defaultChartDays = 7;
 
 const sourceFromReferrer = () => {
   const params = new URLSearchParams(window.location.search);
@@ -59,16 +59,58 @@ const getDateKey = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-const getRecentDays = () =>
-  Array.from({ length: chartDays }, (_, index) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (chartDays - 1 - index));
+const parseDateKey = (dateKey) => {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  return new Date(year, month - 1, day);
+};
 
-    return {
+const addDays = (date, days) => {
+  const nextDate = new Date(date);
+  nextDate.setDate(nextDate.getDate() + days);
+  return nextDate;
+};
+
+const getDefaultRange = () => {
+  const end = new Date();
+  const start = addDays(end, -(defaultChartDays - 1));
+
+  return {
+    startKey: getDateKey(start),
+    endKey: getDateKey(end)
+  };
+};
+
+const getRangeDays = (startKey, endKey) => {
+  const start = parseDateKey(startKey);
+  const end = parseDateKey(endKey);
+  const days = [];
+
+  for (let date = start; date <= end; date = addDays(date, 1)) {
+    days.push({
       key: getDateKey(date),
-      label: date.toLocaleDateString(undefined, { weekday: "short" })
-    };
-  });
+      label: date.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+    });
+  }
+
+  return days;
+};
+
+const getSelectedRange = () => {
+  const { startKey: defaultStart, endKey: defaultEnd } = getDefaultRange();
+  const startInput = document.querySelector("#range-start");
+  const endInput = document.querySelector("#range-end");
+  let startKey = startInput.value || defaultStart;
+  let endKey = endInput.value || defaultEnd;
+
+  if (startKey > endKey) {
+    [startKey, endKey] = [endKey, startKey];
+  }
+
+  startInput.value = startKey;
+  endInput.value = endKey;
+
+  return { startKey, endKey };
+};
 
 const pointPath = (points) => {
   if (points.length === 1) {
@@ -130,7 +172,8 @@ const renderVisitorChart = (dailyData) => {
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
   const maxVisitors = Math.max(1, ...dailyData.map((day) => day.count));
-  const tickValues = [maxVisitors, Math.round(maxVisitors / 2), 0];
+  const tickValues = [...new Set([maxVisitors, Math.ceil(maxVisitors / 2), 0])];
+  const labelInterval = Math.max(1, Math.ceil(dailyData.length / 7));
 
   const points = dailyData.map((day, index) => {
     const x = padding.left + (chartWidth / (dailyData.length - 1 || 1)) * index;
@@ -171,10 +214,12 @@ const renderVisitorChart = (dailyData) => {
     .join("");
 
   labelsGroup.innerHTML = points
-    .map(
-      (point) =>
-        `<text x="${point.x}" y="${height - 15}" text-anchor="middle">${point.label}</text>`
-    )
+    .map((point, index) => {
+      const shouldShowLabel = index === 0 || index === points.length - 1 || index % labelInterval === 0;
+      return shouldShowLabel
+        ? `<text x="${point.x}" y="${height - 15}" text-anchor="middle">${point.label}</text>`
+        : "";
+    })
     .join("");
 
   pointsGroup.querySelectorAll(".chart-point").forEach((pointElement) => {
@@ -191,6 +236,34 @@ const renderVisitorChart = (dailyData) => {
   });
 };
 
+const escapeCsvValue = (value) => {
+  const stringValue = String(value);
+  if (/[",\n]/.test(stringValue)) {
+    return `"${stringValue.replaceAll("\"", "\"\"")}"`;
+  }
+
+  return stringValue;
+};
+
+const downloadCsv = (dailyData) => {
+  const header = ["date", "visitors"];
+  const rows = dailyData.map((day) => [day.key, day.count]);
+  const csv = [header, ...rows]
+    .map((row) => row.map(escapeCsvValue).join(","))
+    .join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const { startKey, endKey } = getSelectedRange();
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = `notability-visitors-${startKey}-to-${endKey}.csv`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
 const renderSourceList = (sources) => {
   const sourceList = document.querySelector("#source-list");
   const entries = Object.entries(sources)
@@ -202,7 +275,7 @@ const renderSourceList = (sources) => {
     .join("");
 };
 
-const updateVisitorPanel = () => {
+const recordVisit = () => {
   const source = sourceFromReferrer();
   const landingPage = `${window.location.pathname}${window.location.search}`;
   const analytics = readAnalytics();
@@ -217,21 +290,45 @@ const updateVisitorPanel = () => {
 
   writeAnalytics(analytics);
 
-  const recentDays = getRecentDays();
-  const dailyData = recentDays.map((day) => ({
+  return analytics;
+};
+
+const renderVisitorPanel = (analytics) => {
+  const source = analytics.lastSource || sourceFromReferrer();
+  const todayKey = getDateKey(new Date());
+  const { startKey, endKey } = getSelectedRange();
+  const rangeDays = getRangeDays(startKey, endKey);
+  const dailyData = rangeDays.map((day) => ({
     ...day,
     count: analytics.days[day.key] || 0
   }));
-  const weekCount = dailyData.reduce((total, day) => total + day.count, 0);
+  const rangeCount = dailyData.reduce((total, day) => total + day.count, 0);
 
   document.querySelector("#today-count").textContent = (analytics.days[todayKey] || 0).toLocaleString();
-  document.querySelector("#week-count").textContent = weekCount.toLocaleString();
+  document.querySelector("#range-count").textContent = rangeCount.toLocaleString();
   document.querySelector("#visit-source").textContent = source;
   document.querySelector("#chart-summary").textContent =
-    `Last 7 days: ${weekCount.toLocaleString()} local visits. Today: ${(analytics.days[todayKey] || 0).toLocaleString()}.`;
+    `${formatDateLabel(startKey)} to ${formatDateLabel(endKey)}: ${rangeCount.toLocaleString()} local visits. Today: ${(analytics.days[todayKey] || 0).toLocaleString()}.`;
 
   renderVisitorChart(dailyData);
   renderSourceList(analytics.sources);
+
+  return dailyData;
 };
 
-updateVisitorPanel();
+const activeAnalytics = recordVisit();
+let activeDailyData = renderVisitorPanel(activeAnalytics);
+
+document.querySelector("#range-start").addEventListener("change", () => {
+  hideTooltip();
+  activeDailyData = renderVisitorPanel(activeAnalytics);
+});
+
+document.querySelector("#range-end").addEventListener("change", () => {
+  hideTooltip();
+  activeDailyData = renderVisitorPanel(activeAnalytics);
+});
+
+document.querySelector("#download-csv").addEventListener("click", () => {
+  downloadCsv(activeDailyData);
+});
